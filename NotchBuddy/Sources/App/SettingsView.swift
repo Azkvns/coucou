@@ -242,7 +242,7 @@ struct SettingsView: View {
             #if !APPSTORE
             state.refreshPlanRelayState()
             #endif
-            guard fetchedModels.isEmpty,
+            guard false, fetchedModels.isEmpty,
                   let key = KeychainStore.shared.get("anthropic-api-key"), !key.isEmpty else { return }
             Task {
                 let models = await ClaudeService.fetchModels(apiKey: key)
@@ -627,77 +627,26 @@ struct SettingsView: View {
     // MARK: - Agents section
 
     @ViewBuilder private var agentsSection: some View {
-        GroupBox(String(localized: "hooks.claude-code.title")) {
-            VStack(alignment: .leading, spacing: 10) {
-                if hookNeedsUpdate {
-                    HStack(spacing: 6) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.orange)
-                        Text(String(localized: "hooks.outdated"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.orange)
-                    }
-                    #if APPSTORE
-                    Button(String(localized: "hooks.update")) { installHooksAppStore() }
-                    #else
-                    Button(String(localized: "hooks.update")) { installHooks() }
-                    #endif
-                }
-                #if APPSTORE
-                Text("~/.claude/coucou/nb-hook")
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.secondary)
-                HStack(spacing: 10) {
-                    Button(String(localized: "hooks.install")) { installHooksAppStore() }
-                        .buttonStyle(.borderedProminent)
-                    Button(String(localized: "hooks.uninstall")) { uninstallHooksAppStore() }
-                        .buttonStyle(.bordered)
-                }
-                #else
-                Text("nb-hook : \(HookServer.hookScriptPath)")
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.secondary)
-                HStack(spacing: 10) {
-                    Button(String(localized: "hooks.install")) { installHooks() }
-                        .buttonStyle(.borderedProminent)
-                    Button(String(localized: "hooks.uninstall")) { uninstallHooks() }
-                        .buttonStyle(.bordered)
-                }
-                #endif
-                Toggle("Answer questions and permissions from terminal sessions in the notch", isOn: $terminalCardsEnabled)
-                Text("Off: sessions in Warp, Terminal, iTerm… show in the notch, but their questions and permission requests are asked in the terminal. On: the notch shows them first, and the terminal waits until you answer there or close the island (up to 2 min).")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                #if !APPSTORE
-                if showDiff {
-                    ScrollView {
-                        Text(pendingHookJSON)
-                            .font(.system(size: 10, design: .monospaced))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .frame(height: 140)
-                    .background(Color(NSColor.textBackgroundColor))
-                    .cornerRadius(6)
-
-                    HStack {
-                        Button(String(localized: "hooks.confirm-write")) { confirmInstall() }
-                            .buttonStyle(.borderedProminent)
-                        Button(String(localized: "Cancel")) { showDiff = false; pendingHookJSON = "" }
-                            .buttonStyle(.bordered)
-                    }
-                }
-                #endif
-            }
-            .padding(6)
-        }
-            .settingsAnchor("agents.claude")
-
         #if !APPSTORE
-        ClaudeDesktopChatSettingsSection()
-            .settingsAnchor("agents.claude-desktop")
-
+        GroupBox("Cursor Agent") {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Native Cursor events appear on the Cursor pill. Permissions stay in Cursor.")
+                Button("Install Cursor hooks…") {
+                    do {
+                        let preview = try HookServer.shared.previewCursorHooks()
+                        let alert = NSAlert()
+                        alert.messageText = "Install Coucou hooks for Cursor?"
+                        alert.informativeText = "Existing hooks are preserved and a dated backup is created.\n\n" + preview
+                        alert.addButton(withTitle: "Install")
+                        alert.addButton(withTitle: "Cancel")
+                        if alert.runModal() == .alertFirstButtonReturn {
+                            try HookServer.shared.writeCursorHooks()
+                            statusMessage = "Cursor hooks installed. Restart Cursor to activate."
+                        }
+                    } catch { statusMessage = error.localizedDescription }
+                }
+            }.padding(6)
+        }
         GroupBox(String(localized: "hooks.gemini.title")) {
             VStack(alignment: .leading, spacing: 10) {
                 Text(geminiHooksInstalled
@@ -1018,64 +967,8 @@ struct SettingsView: View {
         }
         #endif
 
-        GroupBox(String(localized: "plan.title")) {
+        GroupBox("Codex plan") {
             VStack(alignment: .leading, spacing: 10) {
-                Text(String(localized: "plan.description"))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Toggle(String(localized: "plan.show-in-notch"), isOn: Binding(
-                    get: { state.showPlanInNotch || planTogglePending },
-                    set: { on in
-                        if on {
-                            if state.planRelayInstalled {
-                                state.showPlanInNotch = true
-                            } else {
-                                planTogglePending = true
-                                installStatusLine()
-                            }
-                        } else {
-                            state.showPlanInNotch = false
-                            planTogglePending = false
-                        }
-                    }
-                ))
-                HStack(spacing: 10) {
-                    if state.planRelayInstalled {
-                        Text(String(localized: "plan.relay.installed"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                        Button(String(localized: "plan.relay.uninstall")) { uninstallStatusLine() }
-                            .buttonStyle(.bordered)
-                    } else {
-                        Text(String(localized: "plan.relay.not-installed"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                        Button(String(localized: "plan.relay.install")) { installStatusLine() }
-                            .buttonStyle(.borderedProminent)
-                    }
-                }
-                if showStatusLineDiff {
-                    ScrollView {
-                        Text(pendingStatusLineJSON)
-                            .font(.system(size: 10, design: .monospaced))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .frame(height: 100)
-                    .background(Color(NSColor.textBackgroundColor))
-                    .cornerRadius(6)
-                    HStack {
-                        Button(String(localized: "hooks.confirm-write")) { confirmStatusLine() }
-                            .buttonStyle(.borderedProminent)
-                        Button(String(localized: "Cancel")) {
-                            showStatusLineDiff = false
-                            pendingStatusLineJSON = ""
-                            planTogglePending = false
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
-                Divider()
                 Text("Shows your Codex plan usage (weekly limit and free resets left) in the notch header. Coucou asks the Codex CLI (codex app-server) when the pill shows; nothing is installed. Codex must be signed in with ChatGPT.")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
@@ -1161,47 +1054,6 @@ struct SettingsView: View {
         .onAppear { CLILocator.shared.refresh() }
         .onReceive(NotificationCenter.default.publisher(for: CLILocator.changed)) { _ in cliScan += 1 }
         #endif
-
-        GroupBox(String(localized: "chat.anthropic-api.title")) {
-            VStack(alignment: .leading, spacing: 8) {
-                SecureField(String(localized: "chat.api-key.claude"), text: $apiKey)
-                    .textFieldStyle(.roundedBorder)
-                Button(String(localized: "Save")) {
-                    KeychainStore.shared.set("anthropic-api-key", value: apiKey)
-                    statusMessage = String(localized: "status.key-saved")
-                }
-                .buttonStyle(.borderedProminent)
-
-
-                Divider().padding(.vertical, 2)
-
-                Picker(String(localized: "chat.model"), selection: $modelChoice) {
-                    ForEach(displayModels, id: \.id) { preset in
-                        Text(preset.label).tag(preset.id)
-                    }
-                    Text(String(localized: "chat.model.custom")).tag(Self.customModelTag)
-                }
-                .onChange(of: modelChoice) { _, choice in
-                    if choice != Self.customModelTag {
-                        state.claudeModel = choice
-                    } else {
-                        applyCustomModel(customModel)
-                    }
-                }
-
-                if modelChoice == Self.customModelTag {
-                    TextField(String(localized: "chat.model.custom-id"), text: $customModel)
-                        .textFieldStyle(.roundedBorder)
-                        .onChange(of: customModel) { _, value in applyCustomModel(value) }
-                }
-
-                Text(String(localized: "chat.model.description"))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-            .padding(6)
-        }
-            .settingsAnchor("chat.anthropic")
 
         GroupBox(String(localized: "chat.other-providers.title")) {
             VStack(alignment: .leading, spacing: 12) {
@@ -1314,7 +1166,7 @@ struct SettingsView: View {
                         ollamaURL = ""
                         state.fetchedProviderModels[.ollama] = nil
                         state.providerModelFetchError[.ollama] = nil
-                        if state.chatProvider == .ollama { state.chatProvider = .anthropic }
+                        if state.chatProvider == .ollama { state.chatProvider = .openai }
                         statusMessage = String(localized: "status.local.ollama-disconnected")
                     }
                     .buttonStyle(.bordered)
@@ -1349,7 +1201,7 @@ struct SettingsView: View {
                         lmstudioURL = ""
                         state.fetchedProviderModels[.lmstudio] = nil
                         state.providerModelFetchError[.lmstudio] = nil
-                        if state.chatProvider == .lmstudio { state.chatProvider = .anthropic }
+                        if state.chatProvider == .lmstudio { state.chatProvider = .openai }
                         statusMessage = String(localized: "status.local.lmstudio-disconnected")
                     }
                     .buttonStyle(.bordered)
@@ -1551,8 +1403,7 @@ struct SettingsView: View {
                 HStack(alignment: .top, spacing: 6) {
                     Image(systemName: webKeySaved ? "checkmark.circle.fill" : "exclamationmark.circle")
                         .foregroundColor(webKeySaved ? .green : .orange)
-                    Text(webKeySaved ? String(localized: "voice.setting-web-desc")
-                                     : String(localized: "voice.setting-web-nokey"))
+                    Text("Voice AI is disabled in this fork; local voice commands remain available.")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -2347,6 +2198,7 @@ struct SettingsView: View {
             if isMain { return nil }
             if def.comingSoon { return String(localized: "Coming soon") }
             #if !APPSTORE
+            if def.id == "agent_cursor" && !HookServer.cursorHooksInstalled() { return String(localized: "Hooks not installed") }
             if def.id == "agent_gemini"        && !HookServer.geminiHooksInstalled()      { return String(localized: "Hooks not installed") }
             if def.id == "agent_antigravity"   && !HookServer.agyHooksInstalled()        { return String(localized: "Hooks not installed") }
             if def.id == "agent_codex"         && !HookServer.codexHooksInstalled()      { return String(localized: "Hooks not installed") }

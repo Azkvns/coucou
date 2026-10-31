@@ -1,6 +1,9 @@
 import AppKit
 import Combine
 import SwiftUI
+#if !APPSTORE
+import CoucouToolbox
+#endif
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -17,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         #if !APPSTORE
+        ToolboxController.shared.shutdown()
         NoteTaker.shared.shutdown()
         // The GOWA gateway Coucou started never outlives it.
         WhatsAppGOWAProcess.shared.stopNow()
@@ -42,6 +46,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #endif
         setupMenuBarItem()
         setupIsland()
+        #if !APPSTORE
+        ToolboxController.shared.onNotification = { message, _ in
+            let state = AppState.shared
+            guard state.activeIntegrations.contains("integration_toolbox") else { return }
+            if let index = state.tasks.firstIndex(where: { $0.id == "integration_toolbox" }) {
+                state.tasks[index].steps = [message]
+                state.tasks[index].stepIndex = 0
+                state.tasks[index].pillBadge = .finished
+                state.tasks[index].state = .finished
+            }
+            SoundEngine.shared.play("finish")
+        }
+        if AppState.shared.activeIntegrations.contains("integration_toolbox") {
+            ToolboxController.shared.start()
+        }
+        #endif
         MachineVitals.shared.start()
         #if !APPSTORE
         // Opened by hand (Finder, Dock, Spotlight): the Coucou window shows. Not at login.
@@ -93,6 +113,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return menu
     }
 
+    @objc private func openToolbox() { ToolboxController.shared.show() }
+
     @objc private func openNotes() {
         FlowHubController.shared.show(.notes)
     }
@@ -141,6 +163,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: NSLocalizedString("Weekly recap", comment: ""), action: #selector(openWeeklyRecap), keyEquivalent: "")
         #if !APPSTORE
         menu.addItem(withTitle: String(localized: "hub.menu"), action: #selector(openFlowHub), keyEquivalent: "")
+        menu.addItem(withTitle: "Tools…", action: #selector(openToolbox), keyEquivalent: "")
         #endif
         menu.addItem(withTitle: NSLocalizedString("Settings…", comment: ""), action: #selector(openSettings), keyEquivalent: ",")
         menu.addItem(.separator())
@@ -366,7 +389,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MailController.shared.start()
         WhatsAppController.shared.start()
         MacUpdater.shared.start()
-        ClaudeDesktopChatWatcher.shared.start()
+        // Claude Desktop is excluded from this fork.
         #endif
         CryptoController.shared.start()
         PortfolioController.shared.start()

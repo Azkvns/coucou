@@ -64,5 +64,7 @@
 	<string>Coucou turns your voice into the text of a chat message.</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Show your calendar meetings in Coucou Tools.</string>
 </dict>
 </plist>

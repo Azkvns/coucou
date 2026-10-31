@@ -125,7 +125,7 @@ final class AppState: ObservableObject {
     /// actions on them. Off at each launch.
     @Published var chatMailMode = false
 
-    @Published var chatProvider: ChatProvider = .anthropic {
+    @Published var chatProvider: ChatProvider = .openai {
         didSet { UserDefaults.standard.set(chatProvider.rawValue, forKey: "chatProvider") }
     }
     @Published var googleChatModel: String = ChatProvider.google.defaultModel {
@@ -396,7 +396,7 @@ final class AppState: ObservableObject {
     }
 
     // Active integration pills (main workspace pill excluded). Max 4.
-    @Published var activeIntegrations: Set<String> = ["integration_resend", "integration_n8n", "integration_vercel", "integration_github"] {
+    @Published var activeIntegrations: Set<String> = ["agent_cursor", "integration_toolbox", "ai_openai"] {
         didSet {
             if let data = try? JSONEncoder().encode(Array(activeIntegrations)) {
                 UserDefaults.standard.set(data, forKey: "activeIntegrations")
@@ -561,7 +561,7 @@ final class AppState: ObservableObject {
     }
 
     func refreshPlanRelayState() {
-        planRelayInstalled = HookServer.statusLineInstalled()
+        planRelayInstalled = false
     }
     #endif
 
@@ -576,7 +576,7 @@ final class AppState: ObservableObject {
         pillColors = PillColors.stored
         if let v = ud.string(forKey: "claudeModel"),
            !v.trimmingCharacters(in: .whitespaces).isEmpty { claudeModel = v }
-        if let v = ud.string(forKey: "chatProvider"), let p = ChatProvider(rawValue: v) { chatProvider = p }
+        if let v = ud.string(forKey: "chatProvider"), let p = ChatProvider(rawValue: v), p != .anthropic { chatProvider = p }
         if let v = ud.string(forKey: "googleChatModel"), !v.isEmpty { googleChatModel = v }
         if let v = ud.string(forKey: "openAIChatModel"), !v.isEmpty { openAIChatModel = v }
         if let v = ud.string(forKey: "ollamaChatModel"), !v.isEmpty { ollamaChatModel = v }
@@ -615,9 +615,9 @@ final class AppState: ObservableObject {
         if let d = ud.data(forKey: "claudePlanUsage"),
            let u = try? JSONDecoder().decode(PlanUsage.self, from: d) { claudePlanUsage = u }
         #if !APPSTORE
-        if let v = ud.object(forKey: "showPlanInNotch") as? Bool { showPlanInNotch = v }
+        showPlanInNotch = false
         if let v = ud.object(forKey: "showCodexPlanInNotch") as? Bool { showCodexPlanInNotch = v }
-        planRelayInstalled = HookServer.statusLineInstalled()
+        planRelayInstalled = false
         #endif
 
         // Sync SoundEngine volume on launch

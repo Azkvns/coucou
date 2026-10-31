@@ -105,6 +105,8 @@ enum PillCatalog {
               category: .ai,        subtitle: String(localized: "Chat"),         source: .n8n),
         .init(id: "ai_lmstudio",         name: "LM Studio",   color: ChatProvider.lmstudio.accentHex,
               category: .ai,        subtitle: String(localized: "Chat"),         source: .n8n),
+        .init(id: "integration_toolbox", name: "Tools", color: "#2DD4BF",
+              category: .service, subtitle: String(localized: "Integration"), source: .n8n, githubOnly: true),
         // ── Services ─────────────────────────────────────────────────────────
         .init(id: "integration_resend",  name: "Resend",      color: "#22C55E",
               category: .service,   subtitle: String(localized: "Integration"),  source: .n8n),
@@ -138,15 +140,21 @@ enum PillCatalog {
 
     /// Pills available in the current build target.
     static var available: [PillDefinition] {
+        let excluded: Set<String> = ["integration_claude", "agent_claude-desktop", "ai_anthropic"]
+        let enabled = all.filter { !excluded.contains($0.id) }
         #if APPSTORE
-        all.filter { !$0.githubOnly }
+        return enabled.filter { !$0.githubOnly }
         #else
-        all
+        return enabled
         #endif
     }
 
     /// Default ID for the always-on main workspace pill.
-    static let defaultMainPillId = "integration_claude"
+    #if APPSTORE
+    static let defaultMainPillId = "agent_cursor"
+    #else
+    static let defaultMainPillId = "agent_codex"
+    #endif
 
     /// The catalog pill an ID stands for. A second session's own pill ("integration_claude#2",
     /// SessionPillMap) and the iPhone record of a second question behind a pill

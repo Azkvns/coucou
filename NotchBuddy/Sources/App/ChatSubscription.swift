@@ -23,7 +23,7 @@ extension ChatProvider {
     var subscriptionOnly: Bool { self == .cursor || self == .copilot }
 
     /// The providers listed under "Your AI subscriptions", in order.
-    static let subscriptionProviders: [ChatProvider] = [.anthropic, .google, .openai, .cursor, .copilot]
+    static let subscriptionProviders: [ChatProvider] = [.openai, .cursor, .google, .copilot]
 
     /// The name under "Your AI subscriptions": the plan people know.
     var subscriptionName: String {
@@ -66,7 +66,7 @@ extension AppState {
         UserDefaults.standard.set(on, forKey: Self.subscriptionKey(p))
         objectWillChange.send()
         // The chat can't stay on a provider that no longer answers.
-        if !on && p.subscriptionOnly && chatProvider == p { chatProvider = .anthropic }
+        if !on && p.subscriptionOnly && chatProvider == p { chatProvider = .openai }
         fetchedProviderModels[p] = nil
         providerModelFetchError[p] = nil
     }

@@ -147,6 +147,20 @@ def main():
             check(json.loads(out)["hookSpecificOutput"]["updatedInput"]["answers"] == {"Which one?": "First"},
                   "an answer from the notch comes back to the agent")
 
+            for native, canonical in [("beforeSubmitPrompt", "UserPromptSubmit"),
+                                      ("preToolUse", "PreToolUse"),
+                                      ("postToolUseFailure", "PostToolUseFailure"),
+                                      ("stop", "Stop")]:
+                native_event = {"hook_event_name": native, "conversation_id": "cursor-native",
+                                "workspace_roots": ["/tmp/coucou-workspace"],
+                                "tool_name": "Shell", "tool_input": {"command": "pwd"}}
+                run(hook_dir, native_event, args=("--agent", "cursor"), env=env)
+                received = coucou.next()
+                check(received.get("hook_event_name") == canonical, "Cursor event normalized: " + native)
+                check(received.get("coucou_agent") == "cursor", "native Cursor has its own pill")
+                check(received.get("session_id") == "cursor-native", "Cursor conversation ID preserved")
+                check(received.get("cwd") == "/tmp/coucou-workspace", "Cursor workspace roots preserved")
+
             vscode = dict(env, CLAUDE_CODE_ENTRYPOINT="claude-vscode")
             run(hook_dir, event, env=vscode)
             check(coucou.next().get("term_program") == "vscode", "a remote VS Code session goes to the VS Code pill")

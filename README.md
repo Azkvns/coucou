@@ -1,3 +1,51 @@
+# Coucou — Codex / Cursor fork
+
+This fork targets the unsandboxed macOS build. Its main pill is Codex and its default chat provider is OpenAI. ChatGPT and Cursor subscriptions use the existing official CLI relays. Claude/Anthropic are excluded from the available pills, chat providers, credentials and incoming agent sessions. Legacy types remain for decoding existing preferences and compatibility with upstream source; old keys and external hook files are not deleted.
+
+## Tools from Cyclop
+
+Open **Coucou menu → Tools…**, or enable **Tools** in Settings → Active pills and use its card.
+
+The separate Tools window contains translation (Apple Translation, Russian/English), pipelines, Docker services, an embedded SwiftTerm terminal, open ports, calendar meetings, clipboard history and notifications. The island continues to show agent sessions.
+
+- Calendar access is requested only by its permission button. Clipboard recording starts only after **Record clipboard history** is enabled; history stays in memory.
+- Pipelines and terminal shells start on user actions. Closing Tools pauses foreground polling; running pipelines and existing shells keep running until stopped or Coucou quits.
+- Calendar, pipeline and Docker notifications appear in Tools history. With the Tools pill enabled, new notifications update its badge and ticker and play the configured sound while Tools is unfocused. Monitoring starts at app launch when that pill is enabled, or when Tools is opened.
+- **Import Cyclop…** reads `pipelines.json` and `terminals.json` from the selected Cyclop Application Support folder and the Docker catalog from Cyclop preferences (`com.cyclop.app`). Existing UUIDs and Docker names win; commands do not run during import. Original Cyclop data is not changed.
+- Coucou configuration is separate: `~/Library/Application Support/NotchBuddy/Toolbox/`. Import is additive and does not move running processes, clipboard history or notification history.
+
+## Connect your agents
+
+**Codex:** Settings → Agents → Codex hooks uses the existing upstream installer and backup/preview flow. The local Codex version must support that hooks format; this fork does not install or upgrade Codex automatically.
+
+**Cursor Agent:** Settings → Agents → Cursor Agent → Install Cursor hooks. Review the proposed JSON. Coucou preserves existing hooks, checks for edits made after preview and creates a dated backup of `~/.cursor/hooks.json`. Native Cursor permissions remain in Cursor; Coucou observes prompt, tool and session lifecycle events. Claude Code running inside Cursor is excluded.
+
+**ChatGPT / Cursor chat:** Settings → Chat → Your AI subscriptions. Sign in using the provider's official CLI. API mode continues to use your own API key. This change does not introduce a new login or read subscription credentials.
+
+Claude-only voice AI and Flow cloud cleanup are unavailable in this fork; local dictation/voice commands remain. Notes offer local Apple summaries or no summaries. Phone, Windows and Linux features have not been ported from Cyclop or verified by this migration.
+
+## Build and checks
+
+Use the existing macOS prerequisites, including Xcode and XcodeGen. The `NotchBuddy` target depends on the local `Toolbox` Swift package; `CoucouAppStore` does not include the toolbox.
+
+```sh
+cd NotchBuddy
+xcodegen generate
+xcodebuild -project NotchBuddy.xcodeproj -scheme NotchBuddy -configuration Debug CODE_SIGNING_ALLOWED=NO build
+```
+
+```sh
+bash scripts/test-fork-profile.sh
+python3 scripts/test-nb-hook.py
+bash scripts/test-cli-relay.sh
+bash scripts/test-toolbox.sh
+```
+
+The imported Cyclop code is MIT licensed; attribution is retained in `Toolbox/LICENSE-Cyclop`. SwiftTerm remains pinned to Cyclop's version 1.2.5. Toolbox tests use a temporary support directory rather than the user's saved configuration.
+
+<details>
+<summary>Original upstream documentation (includes features excluded from this fork)</summary>
+
 <div align="center">
 
 <img src="NotchBuddy/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width="96" alt="Coucou icon">
@@ -506,3 +554,5 @@ Inspired by the notch-companion concepts shared by design studios — this proje
 [Website](https://louis-cfm.github.io/coucou/) · [Privacy](https://louis-cfm.github.io/coucou/privacy.html) · [Terms](https://louis-cfm.github.io/coucou/terms.html) · [Support](https://louis-cfm.github.io/coucou/support.html)
 
 </div>
+
+</details>

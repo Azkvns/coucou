@@ -1,4 +1,7 @@
 import SwiftUI
+#if !APPSTORE
+import CoucouToolbox
+#endif
 
 // MARK: - Dispatch view content by IslandView
 
@@ -382,7 +385,7 @@ struct EmptyStateView: View {
                         .foregroundColor(Color(hex: "#9398A1"))
                 }
                 Spacer()
-                PrimaryButton("Ask Claude") {
+                PrimaryButton("Ask AI") {
                     state.view = .prompt
                 }
             }
@@ -810,7 +813,7 @@ struct FinishedView: View {
         ZStack {
             CardBackground(wash: .green)
             VStack(alignment: .leading, spacing: 5) {
-                AgentWho(task: state.focusTask, label: state.focusTask?.source == .agent ? "finished" : "Claude Code finished")
+                AgentWho(task: state.focusTask, label: state.focusTask?.source == .agent ? "finished" : "Agent finished")
                 Text({
                     if let fl = state.focusTask?.finalLine { return fl }
                     if let s = state.focusTask?.steps.last(where: { !$0.isDiffStep }) { return s }
@@ -1980,7 +1983,14 @@ struct IntegrationCardView: View {
         switch task.pill {
         // Cursor sessions are Claude Code running in Cursor's integrated terminal,
         // so the Cursor pill is set up exactly when the Claude Code hooks are.
-        case "integration_claude", "agent_cursor":
+        case "integration_toolbox": return true
+        case "agent_cursor":
+            #if !APPSTORE
+            return HookServer.cursorHooksInstalled()
+            #else
+            return false
+            #endif
+        case "integration_claude":
             return HookServer.claudeHooksInstalled()
         case "agent_codex":
             #if !APPSTORE
@@ -2401,7 +2411,12 @@ struct IntegrationCardView: View {
                 .padding(.top, 2)
 
                 HStack(spacing: 8) {
-                    if task.pill == "integration_claude", task.hostApp != nil {
+                    if task.pill == "integration_toolbox" {
+                        #if !APPSTORE
+                        Button("Open Tools") { ToolboxController.shared.show() }
+                            .buttonStyle(.plain)
+                        #endif
+                    } else if task.pill == "integration_claude", task.hostApp != nil {
                         Button("Open \(ClaudeHost.name(for: task.hostApp))") { ClaudeHost.activate(task.hostApp) }
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(Color(hex: task.color).opacity(0.7))
@@ -5239,27 +5254,16 @@ struct SendButtonStyle: ButtonStyle {
 struct SettingsIslandView: View {
     @ObservedObject var state: AppState
 
-    private var claudeConnected: Bool {
-        #if APPSTORE
-        // Sandboxed: ~/.claude isn't readable here, and the hook path has no "NotchBuddy".
-        return HookServer.claudeHooksInstalled()
+    private var codexConnected: Bool {
+        #if !APPSTORE
+        HookServer.codexHooksInstalled()
         #else
-        let url = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".claude/settings.json")
-        guard let data = try? Data(contentsOf: url),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let hooks = json["hooks"] as? [String: Any],
-              let ss = hooks["SessionStart"] as? [[String: Any]] else { return false }
-        return ss.contains { matcher in
-            (matcher["hooks"] as? [[String: Any]])?.contains {
-                ($0["command"] as? String)?.contains("NotchBuddy") == true
-            } ?? false
-        }
+        false
         #endif
     }
 
     private var apiConnected: Bool {
-        KeychainStore.shared.get("anthropic-api-key") != nil
+        KeychainStore.shared.get("openai-api-key") != nil
     }
 
     var body: some View {
@@ -5308,7 +5312,7 @@ struct SettingsIslandView: View {
 
                 // Connection status
                 HStack(spacing: 14) {
-                    StatusBadge(label: "Claude Code", ok: claudeConnected)
+                    StatusBadge(label: "Codex", ok: codexConnected)
                     StatusBadge(label: "API", ok: apiConnected)
                     Spacer()
                     Button("Settings…") {

@@ -112,6 +112,7 @@ enum AgentSource: Equatable {
 // MARK: - Chat provider
 
 enum ChatProvider: String, CaseIterable, Codable {
+    static let allCases: [ChatProvider] = [.openai, .cursor, .google, .copilot, .ollama, .lmstudio, .deepseek, .qwen, .moonshot]
     case anthropic = "anthropic"
     case google    = "google"
     case openai    = "openai"

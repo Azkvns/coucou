@@ -61,7 +61,6 @@ final class KeychainStore: @unchecked Sendable {
     private let lock = NSLock()
 
     private static let allKeys = [
-        "anthropic-api-key",
         "google-api-key",
         "openai-api-key",
         "deepseek-api-key",
@@ -94,11 +93,13 @@ final class KeychainStore: @unchecked Sendable {
 
     /// Thread-safe read — never touches the Keychain.
     func get(_ key: String) -> String? {
-        lock.withLock { cache[key] }
+        guard key != "anthropic-api-key" else { return nil }
+        return lock.withLock { cache[key] }
     }
 
     /// Updates cache + persists to Keychain.
     func set(_ key: String, value: String) {
+        guard key != "anthropic-api-key" else { return }
         lock.withLock { cache[key] = value }
         Keychain.save(key: key, value: value)
     }
@@ -323,6 +324,7 @@ final class ClaudeService {
     // MARK: - Chat (multi-turn, natural text + web search)
 
     func chat(query: String, context: PromptContext?, state: AppState) async {
+        if state.chatProvider == .anthropic { state.chatProvider = .openai }
         if DemoEngine.shared.isActive {
             state.stateOverride = .thinking
             await DemoEngine.shared.streamChatResponse(for: query)

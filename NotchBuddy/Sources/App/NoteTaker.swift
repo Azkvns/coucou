@@ -9,6 +9,7 @@ import FoundationModels
 
 /// Who writes the summary of a call.
 enum NoteSummaryEngine: String, CaseIterable, Identifiable {
+    static let allCases: [Self] = [.apple, .off]
     /// The Claude key of Settings → Chat (the transcript goes to Anthropic).
     case claude
     /// Apple Intelligence, on the Mac (macOS 26).
@@ -71,7 +72,7 @@ final class NoteTaker: ObservableObject {
 
     private init() {
         if let saved = UserDefaults.standard.string(forKey: Self.engineKey), let engine = NoteSummaryEngine(rawValue: saved) {
-            summaryEngine = engine
+            summaryEngine = engine == .claude ? (Self.appleModelAvailable ? .apple : .off) : engine
         } else {
             summaryEngine = FlowCleanup.hasKey ? .claude : (Self.appleModelAvailable ? .apple : .off)
         }

@@ -1,0 +1,222 @@
+/* Cyclop — English. The keys are the English text itself, so this table is a
+   formality: it exists so the bundle declares English as a localisation, and so
+   a phrase can be reworded here without touching the code. */
+
+/* Tabs */
+"Music" = "Music";
+"Shelf" = "Shelf";
+"Clipboard" = "Clipboard";
+"Snippets" = "Snippets";
+"Calendar" = "Calendar";
+"Translate" = "Translate";
+"Settings" = "Settings";
+"Ports" = "Ports";
+"Services" = "Services";
+"Pipelines" = "Pipelines";
+
+/* Menu bar */
+"Open Panel" = "Open Panel";
+"Quit" = "Quit";
+
+/* Settings tab */
+"General" = "General";
+"Launch at Login" = "Launch at Login";
+"Displays" = "Displays";
+
+"Tabs" = "Tabs";
+"Show on All Displays" = "Show on All Displays";
+
+"Screenshots" = "Screenshots";
+"Save Clipboard Screenshots" = "Save Clipboard Screenshots";
+"Show Screenshots Folder" = "Show Screenshots Folder";
+"Clear Screenshots Folder" = "Clear Screenshots Folder";
+"Clear Screenshots Folder (%@)" = "Clear Screenshots Folder (%@)";
+"Show Snippets File" = "Show Snippets File";
+
+/* Shelf */
+"Selected: %d" = "Selected: %d";
+"Deselect" = "Deselect";
+"Clear" = "Clear";
+"Copy" = "Copy";
+"Open" = "Open";
+"Show in Finder" = "Show in Finder";
+"Remove from Shelf" = "Remove from Shelf";
+
+/* Media */
+"Nothing is playing" = "Nothing is playing";
+
+/* Snippets */
+"Add a snippet" = "Add a snippet";
+"Name" = "Name";
+"Text" = "Text";
+"Delete" = "Delete";
+"Nothing here yet — add with +" = "Nothing here yet — add with +";
+"snippets.json is broken — click to open; nothing is overwritten" = "snippets.json is broken — click to open; nothing is overwritten";
+
+/* Notes */
+"Notes" = "Notes";
+"New Note" = "New Note";
+"Empty note" = "Empty note";
+"Jot something down…" = "Jot something down…";
+
+/* Translate */
+"Translation Languages…" = "Translation Languages…";
+"Retry" = "Retry";
+"The %@ → %@ language pack is not installed." = "The %@ → %@ language pack is not installed.";
+"macOS does not translate this pair of languages." = "macOS does not translate this pair of languages.";
+
+/* Calendar */
+"Join" = "Join";
+"Join · %@" = "Join · %@";
+"No other meetings this week" = "No other meetings this week";
+"See your next meetings" = "See your next meetings";
+"Cyclop needs access to Calendar. It is the only permission\nthe app asks for, and only for this tab." = "Cyclop needs access to Calendar. It is the only permission\nthe app asks for, and only for this tab.";
+"Allow" = "Allow";
+"Calendar access is off" = "Calendar access is off";
+"Settings → Privacy → Calendars" = "Settings → Privacy → Calendars";
+"No more meetings" = "No more meetings";
+"Nothing on the calendar for the next day" = "Nothing on the calendar for the next day";
+"Untitled" = "Untitled";
+"Calendars" = "Calendars";
+"Done" = "Done";
+
+/* Countdown, lower-case: the capital is added where the label is built.
+   Abbreviated on purpose: a panel header has room for "in 12 min"
+   and not for a spelled-out plural, and abbreviations decline in no language. */
+"now" = "now";
+"any moment" = "any moment";
+"tomorrow" = "tomorrow";
+"in %d min" = "in %d min";
+"in %d h" = "in %d h";
+"in %d h %d min" = "in %d h %d min";
+"in %d d" = "in %d d";
+
+/* Saved screenshots. The key is the date format itself, so a language can put
+   the parts in its own order. */
+"Screenshot" = "Screenshot";
+"yyyy-MM-dd 'at' HH.mm.ss" = "yyyy-MM-dd 'at' HH.mm.ss";
+
+/* Privacy mode: the panel covers what it holds with a field of dots. */
+"Hide Contents" = "Hide Contents";
+"Hidden" = "Hidden";
+"Show" = "Show";
+"Hide" = "Hide";
+"All" = "All";
+
+/* Ports */
+"Mine" = "Mine";
+"Listen" = "Listen";
+"Established" = "Established";
+"Back" = "Back";
+"Kill Process" = "Kill Process";
+"Nothing listening" = "Nothing listening";
+"No established connections" = "No established connections";
+"No open ports" = "No open ports";
+"Could not read ports" = "Could not read ports";
+"Could not stop process" = "Could not stop process";
+"Process already exited" = "Process already exited";
+"Permission denied" = "Permission denied";
+"Process" = "Process";
+"Path" = "Path";
+"Command" = "Command";
+"Socket" = "Socket";
+"Newest" = "Newest";
+"Oldest" = "Oldest";
+"Port #" = "Port #";
+"By name" = "By name";
+"Discovered" = "Discovered";
+"Process started" = "Process started";
+"TCP" = "TCP";
+"UDP" = "UDP";
+"New" = "New";
+"Reveal" = "Reveal";
+"Address" = "Address";
+
+"Teleprompter" = "Teleprompter";
+"Paste the script here" = "Paste the script here";
+"Ready" = "Ready";
+"Done" = "Done";
+
+/* Pipelines */
+"Pipeline %d" = "Pipeline %d";
+"Run Pipeline" = "Run Pipeline";
+"Stop" = "Stop";
+"Continue" = "Continue";
+"Step failed (exit %d)" = "Step failed (exit %d)";
+"Name" = "Name";
+"Add Pipeline" = "Add Pipeline";
+"Delete Pipeline" = "Delete Pipeline";
+"Add Step" = "Add Step";
+"Nothing here yet — add a step" = "Nothing here yet — add a step";
+"Running" = "Running";
+"Pipeline" = "Pipeline";
+"Pipeline \"%@\" started" = "Pipeline \"%@\" started";
+"Pipeline \"%@\" finished" = "Pipeline \"%@\" finished";
+"Pipeline \"%@\" stopped" = "Pipeline \"%@\" stopped";
+"Step %d" = "Step %d";
+"Step \"%@\" started" = "Step \"%@\" started";
+"Step \"%@\" completed" = "Step \"%@\" completed";
+"Step \"%@\" failed (exit %d)" = "Step \"%@\" failed (exit %d)";
+
+/* Calendar notifications */
+"Event added: %@" = "Event added: %@";
+"Event removed: %@" = "Event removed: %@";
+"%@ · in %d min" = "%@ · in %d min";
+"%@ · starting now" = "%@ · starting now";
+"Upcoming meeting · in %d min" = "Upcoming meeting · in %d min";
+"Upcoming meeting · starting now" = "Upcoming meeting · starting now";
+"+%d more" = "+%d more";
+
+/* Terminal */
+"Terminal" = "Terminal";
+"New Tab" = "New Tab";
+"Close Tab" = "Close Tab";
+"Shell exited" = "Shell exited";
+"Terminal runs on the active display" = "Terminal runs on the active display";
+
+/* Services */
+"No containers yet" = "No containers yet";
+"Container" = "Container";
+"Health URL" = "Health URL";
+"Add" = "Add";
+"Start" = "Start";
+"Restart" = "Restart";
+"Kill" = "Kill";
+"Docker is not running" = "Docker is not running";
+"Docker CLI not found" = "Docker CLI not found";
+"Container not found" = "Container not found";
+"Container name is required" = "Container name is required";
+"Container already exists" = "Container already exists";
+"Invalid health URL" = "Invalid health URL";
+"Container is not stopped" = "Container is not stopped";
+"Container is not running" = "Container is not running";
+"Remove from catalog" = "Remove from catalog";
+"No published ports" = "No published ports";
+"Ports: %@" = "Ports: %@";
+"Size: %@" = "Size: %@";
+"HTTP %@" = "HTTP %@";
+"Exited" = "Exited";
+"Restarting" = "Restarting";
+"Paused" = "Paused";
+"Created" = "Created";
+"Dead" = "Dead";
+"Missing" = "Missing";
+"Starting" = "Starting";
+"Healthy" = "Healthy";
+"Unhealthy" = "Unhealthy";
+"Up" = "Up";
+"Degraded" = "Degraded";
+"Down" = "Down";
+"%@ started" = "%@ started";
+"%@ stopped" = "%@ stopped";
+"%@ is unhealthy" = "%@ is unhealthy";
+"%@ is healthy" = "%@ is healthy";
+"%@ health is down" = "%@ health is down";
+"%@ health is up" = "%@ health is up";
+
+/* Dev digest */
+"Dev digest" = "Dev digest";
+"Dev digest is not running" = "Dev digest is not running";
+"No events yet" = "No events yet";
+"GitLab digest collector is degraded" = "GitLab digest collector is degraded";
+"%d new GitLab events · %@" = "%d new GitLab events · %@";

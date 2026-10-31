@@ -1,0 +1,221 @@
+/* Cyclop — русский. Ключи — английский текст, поэтому строка без перевода
+   просто останется английской, а не превратится в идентификатор. */
+
+/* Вкладки */
+"Music" = "Музыка";
+"Shelf" = "Полка";
+"Clipboard" = "Буфер";
+"Snippets" = "Заготовки";
+"Calendar" = "Календарь";
+"Translate" = "Перевод";
+"Settings" = "Настройки";
+"Ports" = "Порты";
+"Services" = "Сервисы";
+"Pipelines" = "Пайплайны";
+
+/* Меню-бар */
+"Open Panel" = "Открыть панель";
+"Quit" = "Выйти";
+
+/* Вкладка настроек */
+"General" = "Общее";
+"Launch at Login" = "Запускать при входе";
+"Displays" = "Дисплеи";
+
+"Tabs" = "Вкладки";
+"Show on All Displays" = "Показывать на всех дисплеях";
+
+"Screenshots" = "Скриншоты";
+"Save Clipboard Screenshots" = "Сохранять скриншоты из буфера";
+"Show Screenshots Folder" = "Показать папку скриншотов";
+"Clear Screenshots Folder" = "Очистить папку снимков";
+"Clear Screenshots Folder (%@)" = "Очистить папку снимков (%@)";
+"Show Snippets File" = "Показать файл заготовок";
+
+/* Полка */
+"Selected: %d" = "Выбрано: %d";
+"Deselect" = "Снять выбор";
+"Clear" = "Очистить";
+"Copy" = "Копировать";
+"Open" = "Открыть";
+"Show in Finder" = "Показать в Finder";
+"Remove from Shelf" = "Убрать с полки";
+
+/* Музыка */
+"Nothing is playing" = "Ничего не играет";
+
+/* Заготовки */
+"Add a snippet" = "Добавить заготовку";
+"Name" = "Название";
+"Text" = "Текст";
+"Delete" = "Удалить";
+"Nothing here yet — add with +" = "Пока пусто — добавь через +";
+"snippets.json is broken — click to open; nothing is overwritten" = "snippets.json не читается — нажми, чтобы открыть; поверх ничего не пишется";
+
+/* Заметки */
+"Notes" = "Заметки";
+"New Note" = "Новая заметка";
+"Empty note" = "Пустая заметка";
+"Jot something down…" = "Набросай что-нибудь…";
+
+/* Перевод */
+"Translation Languages…" = "Языки перевода…";
+"Retry" = "Повторить";
+"The %@ → %@ language pack is not installed." = "Не скачан языковой пакет %@ → %@.";
+"macOS does not translate this pair of languages." = "macOS не переводит эту пару языков.";
+
+/* Календарь */
+"Join" = "Подключиться";
+"Join · %@" = "Подключиться · %@";
+"No other meetings this week" = "Других встреч на неделе нет";
+"See your next meetings" = "Показать ближайшие встречи";
+"Cyclop needs access to Calendar. It is the only permission\nthe app asks for, and only for this tab." = "Нужен доступ к Календарю. Это единственное разрешение,\nкоторое просит Cyclop — и только для этой вкладки.";
+"Allow" = "Разрешить";
+"Calendar access is off" = "Доступ к Календарю закрыт";
+"Settings → Privacy → Calendars" = "Настройки → Конфиденциальность → Календари";
+"No more meetings" = "Встреч больше нет";
+"Nothing on the calendar for the next day" = "В ближайшие сутки календарь пуст";
+"Untitled" = "Без названия";
+"Calendars" = "Календари";
+"Done" = "Готово";
+
+/* Отсчёт со строчной: прописную ставит то место, где строится подпись.
+   Сокращения намеренные: в шапку панели помещается «через 12 мин», но
+   не полное слово с падежом, а сокращение не склоняется ни в каком языке. */
+"now" = "идёт сейчас";
+"any moment" = "вот-вот";
+"tomorrow" = "завтра";
+"in %d min" = "через %d мин";
+"in %d h" = "через %d ч";
+"in %d h %d min" = "через %d ч %d мин";
+"in %d d" = "через %d дн";
+
+/* Сохранённые снимки. Ключ — сам формат даты, чтобы язык мог переставить части
+   в своём порядке. */
+"Screenshot" = "Снимок";
+"yyyy-MM-dd 'at' HH.mm.ss" = "yyyy-MM-dd 'в' HH.mm.ss";
+
+/* Режим приватности: панель закрывает содержимое полем из точек. */
+"Hide Contents" = "Скрывать содержимое";
+"Hidden" = "Скрыто";
+"Show" = "Показать";
+"Hide" = "Скрыть";
+"All" = "Всё";
+
+/* Порты */
+"Mine" = "Мои";
+"Listen" = "LISTEN";
+"Established" = "Установлено";
+"Back" = "Назад";
+"Kill Process" = "Завершить процесс";
+"Nothing listening" = "Нет портов в LISTEN";
+"No established connections" = "Нет соединений ESTABLISHED";
+"No open ports" = "Нет открытых портов";
+"Could not read ports" = "Не удалось прочитать порты";
+"Could not stop process" = "Не удалось завершить процесс";
+"Process already exited" = "Процесс уже завершён";
+"Permission denied" = "Нет прав";
+"Process" = "Процесс";
+"Path" = "Путь";
+"Command" = "Команда";
+"Socket" = "Сокет";
+"Newest" = "Новые";
+"Oldest" = "Старые";
+"Port #" = "Порт №";
+"By name" = "По имени";
+"Discovered" = "Обнаружен";
+"Process started" = "Процесс запущен";
+"TCP" = "TCP";
+"UDP" = "UDP";
+"New" = "Новый";
+"Reveal" = "Показать";
+"Address" = "Адрес";
+
+"Teleprompter" = "Телесуфлёр";
+"Paste the script here" = "Вставьте сюда сценарий";
+"Ready" = "Готово";
+"Done" = "Готово";
+
+/* Пайплайны */
+"Pipeline %d" = "Пайплайн %d";
+"Run Pipeline" = "Запустить пайплайн";
+"Stop" = "Остановить";
+"Continue" = "Продолжить";
+"Step failed (exit %d)" = "Шаг завершился с ошибкой (код %d)";
+"Name" = "Имя";
+"Add Pipeline" = "Добавить пайплайн";
+"Delete Pipeline" = "Удалить пайплайн";
+"Add Step" = "Добавить шаг";
+"Nothing here yet — add a step" = "Пока пусто — добавьте шаг";
+"Running" = "Выполняется";
+"Pipeline" = "Пайплайн";
+"Pipeline \"%@\" started" = "Пайплайн «%@» запущен";
+"Pipeline \"%@\" finished" = "Пайплайн «%@» завершён";
+"Pipeline \"%@\" stopped" = "Пайплайн «%@» остановлен";
+"Step %d" = "Шаг %d";
+"Step \"%@\" started" = "Шаг «%@» запущен";
+"Step \"%@\" completed" = "Шаг «%@» завершён";
+"Step \"%@\" failed (exit %d)" = "Шаг «%@» ошибка (код %d)";
+
+/* Уведомления календаря */
+"Event added: %@" = "Событие добавлено: %@";
+"Event removed: %@" = "Событие удалено: %@";
+"%@ · in %d min" = "%@ · через %d мин";
+"%@ · starting now" = "%@ · начинается сейчас";
+"Upcoming meeting · in %d min" = "Предстоящая встреча · через %d мин";
+"Upcoming meeting · starting now" = "Предстоящая встреча · начинается сейчас";
+"+%d more" = "+%d ещё";
+
+/* Терминал */
+"Terminal" = "Терминал";
+"New Tab" = "Новая вкладка";
+"Close Tab" = "Закрыть вкладку";
+"Shell exited" = "Оболочка завершилась";
+"Terminal runs on the active display" = "Терминал на активном экране";
+
+/* Сервисы */
+"No containers yet" = "Пока нет контейнеров";
+"Container" = "Контейнер";
+"Health URL" = "URL здоровья";
+"Add" = "Добавить";
+"Start" = "Запустить";
+"Restart" = "Перезапустить";
+"Kill" = "Завершить";
+"Docker is not running" = "Docker не запущен";
+"Docker CLI not found" = "Не найден docker";
+"Container not found" = "Контейнер не найден";
+"Container name is required" = "Укажите имя контейнера";
+"Container already exists" = "Контейнер уже добавлен";
+"Invalid health URL" = "Некорректный URL здоровья";
+"Container is not stopped" = "Контейнер не остановлен";
+"Container is not running" = "Контейнер не запущен";
+"Remove from catalog" = "Убрать из каталога";
+"No published ports" = "Нет опубликованных портов";
+"Ports: %@" = "Порты: %@";
+"Size: %@" = "Размер: %@";
+"HTTP %@" = "HTTP: %@";
+"Exited" = "Остановлен";
+"Restarting" = "Перезапускается";
+"Paused" = "Приостановлен";
+"Created" = "Создан";
+"Dead" = "Недоступен";
+"Missing" = "Не найден";
+"Starting" = "Запускается";
+"Healthy" = "Здоров";
+"Unhealthy" = "Нездоров";
+"Up" = "Доступен";
+"Degraded" = "С ошибками";
+"Down" = "Недоступен";
+"%@ started" = "%@ запущен";
+"%@ stopped" = "%@ остановлен";
+"%@ is unhealthy" = "%@ нездоров";
+"%@ is healthy" = "%@ здоров";
+"%@ health is down" = "%@ health недоступен";
+"%@ health is up" = "%@ health доступен";
+
+/* Dev digest */
+"Dev digest" = "Dev digest";
+"Dev digest is not running" = "Dev digest не запущен";
+"No events yet" = "Пока нет событий";
+"GitLab digest collector is degraded" = "Сборщик GitLab digest работает с ошибками";
+"%d new GitLab events · %@" = "%d новых событий GitLab · %@";

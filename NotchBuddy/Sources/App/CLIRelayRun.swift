@@ -18,6 +18,7 @@ final class CLILocator: @unchecked Sendable {
 
     /// The tool's executable, or nil when it isn't installed.
     func path(_ cli: SubscriptionCLI) -> String? {
+        guard cli != .claude else { return nil }
         lock.lock()
         if !looked {
             looked = true
@@ -58,7 +59,7 @@ final class CLILocator: @unchecked Sendable {
         dirs += versionDirs("\(home)/Library/Application Support/fnm/node-versions") { "\($0)/installation/bin" }
         dirs += versionDirs("\(home)/.local/share/fnm/node-versions") { "\($0)/installation/bin" }
         var out: [SubscriptionCLI: String] = [:]
-        for cli in SubscriptionCLI.allCases {
+        for cli in SubscriptionCLI.allCases where cli != .claude {
             search: for name in cli.binaries {
                 for dir in dirs where fm.isExecutableFile(atPath: "\(dir)/\(name)") {
                     out[cli] = "\(dir)/\(name)"
@@ -81,7 +82,7 @@ final class CLILocator: @unchecked Sendable {
     /// friends set PATH up), with no input and a short timeout.
     private func askLoginShell() {
         DispatchQueue.global(qos: .utility).async { [self] in
-            let names = SubscriptionCLI.allCases.flatMap(\.binaries)
+            let names = SubscriptionCLI.allCases.filter { $0 != .claude }.flatMap(\.binaries)
             let script = names.map { "command -v \($0)" }.joined(separator: "; ")
             let shell = ProcessInfo.processInfo.environment["SHELL"].flatMap { $0.isEmpty ? nil : $0 } ?? "/bin/zsh"
             let p = Process()

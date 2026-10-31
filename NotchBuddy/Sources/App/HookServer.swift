@@ -605,6 +605,7 @@ final class HookServer: @unchecked Sendable {
 
     @MainActor
     private func processEvent(name: String, payload: [String: Any]) {
+        guard let agent = payload["coucou_agent"] as? String, !agent.isEmpty, agent != "claude", agent != "claude-desktop" else { return }
         let state = AppState.shared
         let sessionId = payload["session_id"] as? String
                      ?? payload["conversation_id"] as? String
@@ -1012,6 +1013,7 @@ final class HookServer: @unchecked Sendable {
 
     @MainActor
     private func processPermissionRequest(fd: Int32, payload: [String: Any]) {
+        guard let agent = payload["coucou_agent"] as? String, !agent.isEmpty, agent != "claude", agent != "claude-desktop" else { sendLine(fd: fd, text: #"{"permissionDecision":"ask"}"#); close(fd); return }
         let state = AppState.shared
         let sessionId = payload["session_id"] as? String
                      ?? payload["conversation_id"] as? String
@@ -1217,6 +1219,7 @@ final class HookServer: @unchecked Sendable {
 
     @MainActor
     private func processQuestionRequest(fd: Int32, parsed: AskQuestion, payload: [String: Any]) {
+        guard let agent = payload["coucou_agent"] as? String, !agent.isEmpty, agent != "claude", agent != "claude-desktop" else { sendLine(fd: fd, text: #"{"permissionDecision":"ask"}"#); close(fd); return }
         let state = AppState.shared
         let sessionId = payload["session_id"] as? String
                      ?? payload["conversation_id"] as? String
@@ -2250,6 +2253,68 @@ final class HookServer: @unchecked Sendable {
     }
 
     // MARK: - Codex hook installer  (#if !APPSTORE only)
+
+    // Native Cursor Agent hooks, independent of Claude Code in Cursor's terminal.
+    static var cursorHooksURL: URL {
+        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".cursor/hooks.json")
+    }
+
+    static func cursorHooksInstalled() -> Bool {
+        guard let data = try? Data(contentsOf: cursorHooksURL),
+              let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let hooks = root["hooks"] as? [String: Any] else { return false }
+        return hooks.values.contains { value in
+            (value as? [[String: Any]])?.contains {
+                let command = $0["command"] as? String ?? ""
+                return command.contains("nb-hook") && command.contains("--agent cursor")
+            } ?? false
+        }
+    }
+
+    private var pendingCursorData: Data?
+    private var pendingCursorFingerprint: String?
+
+    func previewCursorHooks() throws -> String {
+        let url = Self.cursorHooksURL
+        let current = FileManager.default.fileExists(atPath: url.path) ? try Data(contentsOf: url) : Data()
+        var root = try Self.strictReadJSONObject(at: url, label: "~/.cursor/hooks.json")
+        if let version = root["version"], (version as? Int) != 1 {
+            throw NSError(domain: "Coucou", code: 2, userInfo: [NSLocalizedDescriptionKey: "Unsupported Cursor hooks version; the file was not changed."])
+        }
+        if let raw = root["hooks"], !(raw is [String: Any]) {
+            throw NSError(domain: "Coucou", code: 2, userInfo: [NSLocalizedDescriptionKey: "Cursor hooks must be a JSON object."])
+        }
+        var hooks = root["hooks"] as? [String: Any] ?? [:]
+        for event in ["sessionStart", "sessionEnd", "beforeSubmitPrompt", "preToolUse", "postToolUse", "postToolUseFailure", "subagentStart", "subagentStop", "stop"] {
+            if let raw = hooks[event], !(raw is [[String: Any]]) {
+                throw NSError(domain: "Coucou", code: 2, userInfo: [NSLocalizedDescriptionKey: "Unexpected Cursor hooks format for \(event)."])
+            }
+            var entries = hooks[event] as? [[String: Any]] ?? []
+            entries.removeAll { ($0["command"] as? String)?.contains("nb-hook --agent cursor") == true
+                || (($0["command"] as? String)?.contains("nb-hook\"") == true
+                    && ($0["command"] as? String)?.contains("--agent cursor") == true) }
+            entries.append(["command": "\(hookBase()) --agent cursor"])
+            hooks[event] = entries
+        }
+        root["version"] = 1
+        root["hooks"] = hooks
+        let data = try JSONSerialization.data(withJSONObject: root, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+        pendingCursorData = data
+        pendingCursorFingerprint = sha256Hex(current)
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    func writeCursorHooks() throws {
+        guard let data = pendingCursorData, let fingerprint = pendingCursorFingerprint else { return }
+        let url = Self.cursorHooksURL
+        let current = FileManager.default.fileExists(atPath: url.path) ? try Data(contentsOf: url) : Data()
+        guard sha256Hex(current) == fingerprint else {
+            throw NSError(domain: "Coucou", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cursor hooks changed after preview. Preview again."])
+        }
+        try writeJSONFile(data, to: url, suffix: "hooks.json")
+        pendingCursorData = nil
+        pendingCursorFingerprint = nil
+    }
 
     static var codexHooksURL: URL {
         FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".codex/hooks.json")
@@ -3519,6 +3584,9 @@ def normalize_event(name):
         'pre_tool_use': 'PreToolUse', 'post_tool_use': 'PostToolUse',
         'user_prompt_submit': 'UserPromptSubmit', 'session_start': 'SessionStart',
         'session_end': 'SessionEnd', 'stop': 'Stop',
+        'beforeSubmitPrompt': 'UserPromptSubmit',
+        'postToolUseFailure': 'PostToolUseFailure',
+        'subagentStart': 'SubagentStart', 'subagentStop': 'SubagentStop',
         'sessionStart': 'SessionStart', 'userPromptSubmitted': 'UserPromptSubmit',
         'agentStop': 'Stop', 'notification': 'Notification',
         'preToolUse': 'PreToolUse', 'postToolUse': 'PostToolUse',
@@ -3894,6 +3962,9 @@ def normalize_event(name):
         'pre_tool_use': 'PreToolUse', 'post_tool_use': 'PostToolUse',
         'user_prompt_submit': 'UserPromptSubmit', 'session_start': 'SessionStart',
         'session_end': 'SessionEnd', 'stop': 'Stop',
+        'beforeSubmitPrompt': 'UserPromptSubmit',
+        'postToolUseFailure': 'PostToolUseFailure',
+        'subagentStart': 'SubagentStart', 'subagentStop': 'SubagentStop',
         'sessionStart': 'SessionStart', 'userPromptSubmitted': 'UserPromptSubmit',
         'agentStop': 'Stop', 'notification': 'Notification',
         'preToolUse': 'PreToolUse', 'postToolUse': 'PostToolUse',

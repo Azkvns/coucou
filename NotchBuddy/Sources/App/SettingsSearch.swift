@@ -48,7 +48,7 @@ final class SettingsSearch: ObservableObject {
         // The boxes named by the words first, then the settings inside the others.
         var boxes: [SettingsSearchHit] = []
         var labels: [SettingsSearchHit] = []
-        for entry in Self.entries {
+        for entry in Self.entries where !["agents.claude", "agents.claude-desktop", "chat.anthropic"].contains(entry.id) {
             switch SettingsSearchMatch.match(words, title: Self.text(entry.title), page: entry.page.title,
                                              labels: entry.terms.map(Self.text)) {
             case .box?: boxes.append(SettingsSearchHit(entry: entry, label: nil))
